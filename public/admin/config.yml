@@ -4,7 +4,7 @@
 # ============================================================
 backend:
   name: github
-  repo: YOUR-GITHUB-USERNAME/YOUR-REPO-NAME   # <-- CHANGE (e.g. rahul/my-blog)
+  repo: Mukesh39/mindbogling   # <-- CHANGE (e.g. rahul/my-blog)
   branch: main
 
   # --- Only if you host on CLOUDFLARE PAGES: remove the two # below and set your address ---
@@ -16,10 +16,10 @@ local_backend: true          # lets you test /admin on your own computer (npx de
 publish_mode: simple         # Publish = goes live in about a minute
 media_folder: src/assets/uploads
 public_folder: ../../assets/uploads
-media_library:
-  name: default
-  config:
-    max_file_size: 1500000   # blocks uploads over ~1.5 MB so the site stays fast
+# media_library:
+#   name: default
+#   config:
+#     max_file_size: 1500000   # blocks uploads over ~1.5 MB so the site stays fast
 
 collections:
   # ---------- Sections (Economy, Geography, ...) ----------
