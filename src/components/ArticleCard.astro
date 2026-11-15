@@ -1,0 +1,22 @@
+---
+import { Picture } from 'astro:assets';
+import { postUrl, readingTime, formatDate } from '../lib/content';
+const { post, category, lead = false, as: H = 'h3' } = Astro.props;
+const href = postUrl(post);
+const cover = post.data.cover;
+---
+<article class:list={['card', { lead }]}>
+  <a class="card-img" href={href} tabindex="-1" aria-hidden="true">
+    {cover && (
+      <Picture src={cover} formats={['avif', 'webp']} alt="" loading={lead ? 'eager' : 'lazy'}
+        widths={lead ? [600, 900, 1200] : [400, 640, 800]}
+        sizes={lead ? '(min-width: 900px) 640px, 100vw' : '(min-width: 1000px) 360px, (min-width: 620px) 50vw, 100vw'} />
+    )}
+  </a>
+  <div class="card-body">
+    <p class="kicker"><a href={`/${category.id}/`}><i style={`--cat:${category.data.color}`}></i>{category.data.name}</a></p>
+    <H class="card-title"><a href={href}>{post.data.title}</a></H>
+    <p class="excerpt">{post.data.excerpt}</p>
+    <p class="meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time><span>{readingTime(post.body)} min read</span></p>
+  </div>
+</article>

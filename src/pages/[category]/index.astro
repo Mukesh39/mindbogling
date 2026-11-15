@@ -1,0 +1,18 @@
+---
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import { getPosts, getCategories } from '../../lib/content';
+export async function getStaticPaths() {
+  const cats = await getCategories();
+  const posts = await getPosts();
+  return cats.map((c) => ({ params: { category: c.id }, props: { category: c, posts: posts.filter((p) => p.data.category === c.id) } }));
+}
+const { category, posts } = Astro.props;
+---
+<Base title={category.data.name} description={category.data.description || `Articles about ${category.data.name}`}>
+  <main id="main" class="wrap section">
+    <div class="sec-head" style={`--cat:${category.data.color}`}><h1 style="font-size:2rem;display:flex;align-items:center;gap:.6rem"><i></i>{category.data.name}</h1></div>
+    {category.data.description && <p class="sec-desc">{category.data.description}</p>}
+    {posts.length ? <div class="grid">{posts.map((p) => <ArticleCard post={p} category={category} as="h2" />)}</div> : <p>No articles in this section yet.</p>}
+  </main>
+</Base>

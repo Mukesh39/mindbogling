@@ -1,0 +1,17 @@
+---
+import Page from '../layouts/Page.astro';
+import { config } from '../config.mjs';
+---
+<Page title="Privacy policy" description={`Privacy policy of ${config.name}`}>
+  <p><em>Template: review it and adjust it to match the services you actually switch on.</em></p>
+  <h2>What we collect</h2>
+  <p>{config.name} does not ask readers to create accounts. We use a privacy-friendly analytics tool to count visits and see which articles are read. It does not build advertising profiles of individual readers.</p>
+  <h2>Email subscriptions</h2>
+  <p>If you subscribe to our newsletter, your email address is stored by our email provider and used only to send you new articles. You can unsubscribe at any time using the link in every email.</p>
+  <h2>Advertising and cookies</h2>
+  <p>If advertising is enabled, third-party vendors, including Google, may use cookies to show ads based on your visits to this and other sites. You can opt out of personalised advertising in Google's Ads Settings. You can also accept or decline cookies in our cookie notice.</p>
+  <h2>External links</h2>
+  <p>Articles may link to other websites. We are not responsible for their content or privacy practices.</p>
+  <h2>Contact</h2>
+  <p>Questions about this policy: <a href={`mailto:${config.email}`}>{config.email}</a>.</p>
+</Page>

@@ -1,0 +1,16 @@
+---
+import { config } from '../config.mjs';
+---
+{config.consent.enabled && (
+  <div class="consent" id="consent" role="dialog" aria-label="Cookie notice" hidden>
+    <p>We use cookies for ads and to understand how the site is used. You can accept or decline. See our <a href="/privacy/">privacy policy</a>.</p>
+    <div><button class="btn" id="consent-yes" type="button">Accept</button><button class="btn ghost" id="consent-no" type="button">Decline</button></div>
+  </div>
+  <script>
+    const box = document.getElementById('consent');
+    if (box && !localStorage.getItem('consent')) box.hidden = false;
+    const answer = (v: string) => { localStorage.setItem('consent', v); if (box) box.hidden = true; if (v === 'yes') dispatchEvent(new Event('consent-yes')); };
+    document.getElementById('consent-yes')?.addEventListener('click', () => answer('yes'));
+    document.getElementById('consent-no')?.addEventListener('click', () => answer('no'));
+  </script>
+)}

@@ -1,0 +1,9 @@
+---
+import Page from '../layouts/Page.astro';
+import { config } from '../config.mjs';
+---
+<Page title="Disclaimer" description={`Disclaimer of ${config.name}`}>
+  <p><em>Template: review it and adjust it before relying on it.</em></p>
+  <p>The articles on {config.name} are for general information and education only. They are not financial, investment, legal, medical or psychological advice. Please consult a qualified professional before making decisions based on anything you read here.</p>
+  <p>Some links may be affiliate or sponsored links. When they are, we label them clearly. We may earn a commission at no extra cost to you.</p>
+</Page>

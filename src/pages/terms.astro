@@ -1,0 +1,13 @@
+---
+import Page from '../layouts/Page.astro';
+import { config } from '../config.mjs';
+---
+<Page title="Terms of use" description={`Terms of use of ${config.name}`}>
+  <p><em>Template: review it and adjust it before relying on it.</em></p>
+  <h2>Use of content</h2>
+  <p>All articles, images and design on {config.name} belong to {config.author} unless stated otherwise. You may share links and short quotations with credit and a link back. Please do not copy full articles without permission.</p>
+  <h2>No guarantees</h2>
+  <p>We work to keep content accurate, but we provide it as is, without warranties. Pages may change or be removed at any time.</p>
+  <h2>Changes</h2>
+  <p>We may update these terms. Continued use of the site means you accept the current version.</p>
+</Page>

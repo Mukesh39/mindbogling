@@ -1,0 +1,8 @@
+---
+import Page from '../layouts/Page.astro';
+import { config } from '../config.mjs';
+---
+<Page title="Contact" description={`Contact ${config.name}`}>
+  <p>Questions, corrections or ideas for new articles are welcome.</p>
+  <p>Email: <a href={`mailto:${config.email}`}>{config.email}</a></p>
+</Page>

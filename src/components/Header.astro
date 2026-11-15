@@ -1,0 +1,25 @@
+---
+import { config } from '../config.mjs';
+import { getCategories } from '../lib/content';
+import ThemeToggle from './ThemeToggle.astro';
+const cats = await getCategories();
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="brand" href="/">{config.logo && <img src={config.logo} alt="" height="28" />}<span>{config.name}</span></a>
+    <div class="bar-actions">
+      <a class="icon-btn" href="/search/" aria-label="Search articles">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </a>
+      <ThemeToggle />
+    </div>
+  </div>
+  <nav class="wrap cats" aria-label="Sections">
+    {cats.map((c) => (
+      <a href={`/${c.id}/`} aria-current={path.startsWith(`/${c.id}/`) ? 'page' : undefined}>
+        <i style={`--cat:${c.data.color}`}></i>{c.data.name}
+      </a>
+    ))}
+  </nav>
+</header>

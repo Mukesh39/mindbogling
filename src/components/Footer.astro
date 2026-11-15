@@ -1,0 +1,32 @@
+---
+import { config } from '../config.mjs';
+import { getCategories } from '../lib/content';
+import Newsletter from './Newsletter.astro';
+const cats = await getCategories();
+const social = Object.entries(config.social).filter(([, url]) => url);
+---
+<footer class="site-footer">
+  <div class="wrap">
+    {config.newsletter.enabled && <div style="margin-bottom:2rem"><Newsletter /></div>}
+    <div class="foot">
+      <div>
+        <h2>{config.name}</h2>
+        <p>{config.description}</p>
+        {social.length > 0 && <ul>{social.map(([name, url]) => <li><a href={url} rel="noopener me" target="_blank">{name}</a></li>)}</ul>}
+      </div>
+      <div>
+        <h2>Sections</h2>
+        <ul>{cats.map((c) => <li><a href={`/${c.id}/`}>{c.data.name}</a></li>)}</ul>
+      </div>
+      <div>
+        <h2>About</h2>
+        <ul>
+          <li><a href="/about/">About</a></li><li><a href="/contact/">Contact</a></li>
+          <li><a href="/privacy/">Privacy policy</a></li><li><a href="/terms/">Terms</a></li>
+          <li><a href="/disclaimer/">Disclaimer</a></li><li><a href="/rss.xml">RSS feed</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="copy">© {new Date().getFullYear()} {config.name}. All rights reserved.</p>
+  </div>
+</footer>

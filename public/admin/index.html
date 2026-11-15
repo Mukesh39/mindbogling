@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Write and publish</title>
+  </head>
+  <body>
+    <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+    <script>
+      // Adds a "YouTube" button to the article editor: paste a video link or ID.
+      CMS.registerEditorComponent({
+        id: 'youtube',
+        label: 'YouTube video',
+        fields: [{ name: 'id', label: 'YouTube link or video ID', widget: 'string' }],
+        pattern: /^<div class="video"><iframe src="https:\/\/www\.youtube-nocookie\.com\/embed\/([\w-]{11})[^"]*"[^>]*><\/iframe><\/div>$/,
+        fromBlock: function (m) { return { id: m[1] }; },
+        toBlock: function (obj) {
+          var raw = String(obj.id || '').trim();
+          var m = raw.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+          var id = m ? m[1] : raw;
+          return '<div class="video"><iframe src="https://www.youtube-nocookie.com/embed/' + id + '" title="YouTube video" loading="lazy" allowfullscreen></iframe></div>';
+        },
+        toPreview: function (obj) { return '[YouTube video: ' + obj.id + ']'; },
+      });
+    </script>
+  </body>
+</html>

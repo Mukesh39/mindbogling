@@ -1,0 +1,19 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Search" description="Search all articles">
+  <main id="main" class="wrap">
+    <h1 class="page-title">Search</h1>
+    <link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+    <div id="search" class="pagefind-ui"></div>
+    <noscript>Search needs JavaScript.</noscript>
+    <script is:inline src="/pagefind/pagefind-ui.js"></script>
+    <script is:inline>
+      addEventListener('DOMContentLoaded', function () {
+        if (!window.PagefindUI) { document.getElementById('search').textContent = 'Search works on the published site (after "npm run build").'; return; }
+        var ui = new PagefindUI({ element: '#search', showImages: false, resetStyles: false, autofocus: true });
+        var q = new URLSearchParams(location.search).get('q'); if (q) ui.triggerSearch(q);
+      });
+    </script>
+  </main>
+</Base>

@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import Newsletter from '../components/Newsletter.astro';
+import AdSlot from '../components/AdSlot.astro';
+import { config } from '../config.mjs';
+import { getPosts, getCategories } from '../lib/content';
+const posts = await getPosts();
+const cats = await getCategories();
+const catOf = (id: string) => cats.find((c) => c.id === id)!;
+const lead = posts.find((p) => p.data.featured) ?? posts[0];
+const latest = posts.filter((p) => p !== lead).slice(0, 6);
+---
+<Base>
+  <main id="main">
+    <div class="wrap">
+      <h1 class="sr-only">{config.name}</h1>
+      <section class="masthead">
+        <p class="big">{config.tagline}</p>
+        <form class="search-form" action="/search/" role="search">
+          <label class="sr-only" for="q">Search articles</label>
+          <input id="q" name="q" type="search" placeholder="Search articles" />
+          <button class="btn" type="submit">Search</button>
+        </form>
+      </section>
+      {lead ? <ArticleCard post={lead} category={catOf(lead.data.category)} lead as="h2" /> : <p>No articles yet. Publish your first one from /admin/.</p>}
+      <AdSlot slot="home" />
+      {latest.length > 0 && (
+        <section class="section" aria-labelledby="latest-h">
+          <div class="sec-head"><h2 id="latest-h">Latest articles</h2></div>
+          <div class="grid">{latest.map((p) => <ArticleCard post={p} category={catOf(p.data.category)} />)}</div>
+        </section>
+      )}
+      {cats.map((c) => {
+        const list = posts.filter((p) => p.data.category === c.id).slice(0, 3);
+        return list.length > 0 && (
+          <section class="section" aria-labelledby={`h-${c.id}`}>
+            <div class="sec-head" style={`--cat:${c.data.color}`}>
+              <h2 id={`h-${c.id}`}><i></i>{c.data.name}</h2>
+              <a href={`/${c.id}/`}>All {c.data.name} articles</a>
+            </div>
+            {c.data.description && <p class="sec-desc">{c.data.description}</p>}
+            <div class="grid">{list.map((p) => <ArticleCard post={p} category={c} />)}</div>
+          </section>
+        );
+      })}
+    </div>
+  </main>
+</Base>

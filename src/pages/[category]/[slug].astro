@@ -1,0 +1,84 @@
+---
+import { render } from 'astro:content';
+import { Picture, getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+import Share from '../../components/Share.astro';
+import Newsletter from '../../components/Newsletter.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import Comments from '../../components/Comments.astro';
+import { config } from '../../config.mjs';
+import { getPosts, getCategories, readingTime, formatDate } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const cats = await getCategories();
+  return posts.map((post) => {
+    const tags = new Set(post.data.tags);
+    const related = posts
+      .filter((p) => p.id !== post.id)
+      .map((p) => ({ p, score: (p.data.category === post.data.category ? 2 : 0) + p.data.tags.filter((t) => tags.has(t)).length }))
+      .filter((x) => x.score > 0).sort((a, b) => b.score - a.score).slice(0, 3).map((x) => x.p);
+    return { params: { category: post.data.category, slug: post.id }, props: { post, category: cats.find((c) => c.id === post.data.category)!, related, cats } };
+  });
+}
+const { post, category, related, cats } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const minutes = readingTime(post.body);
+const url = new URL(Astro.url.pathname, Astro.site).href;
+const og = post.data.cover ? (await getImage({ src: post.data.cover, width: 1200, height: 630, format: 'jpg' })).src : undefined;
+const author = post.data.author ?? config.author;
+const jsonLd = {
+  '@context': 'https://schema.org', '@type': 'Article', headline: post.data.title, description: post.data.excerpt,
+  datePublished: post.data.date.toISOString(), author: { '@type': 'Person', name: author },
+  publisher: { '@type': 'Organization', name: config.name }, mainEntityOfPage: url,
+  ...(og && { image: new URL(og, Astro.site).href }),
+};
+---
+<Base title={post.data.title} description={post.data.excerpt} image={og} type="article" jsonLd={jsonLd}>
+  <div id="progress" aria-hidden="true"></div>
+  <main id="main">
+    <div data-pagefind-body>
+      <header class="read art-head">
+        <p class="kicker"><a href={`/${category.id}/`}><i style={`--cat:${category.data.color}`}></i>{category.data.name}</a></p>
+        <h1 data-pagefind-meta="title">{post.data.title}</h1>
+        <p class="lede">{post.data.excerpt}</p>
+        <p class="byline"><span>By {author}</span><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time><span>{minutes} min read</span></p>
+      </header>
+      {post.data.cover && (
+        <figure class="cover">
+          <Picture src={post.data.cover} formats={['avif', 'webp']} widths={[640, 960, 1280]} sizes="(min-width: 1000px) 960px, 100vw" alt={post.data.coverAlt} loading="eager" fetchpriority="high" />
+        </figure>
+      )}
+      <div class="read">
+        {toc.length >= 4 && (
+          <details class="toc"><summary>In this article</summary>
+            <ol>{toc.map((h) => <li class={`h${h.depth}`}><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+          </details>
+        )}
+        <AdSlot slot="top" />
+        <div class="prose"><Content /></div>
+      </div>
+    </div>
+    <div class="read after">
+      {post.data.tags.length > 0 && <ul class="tags" aria-label="Tags">{post.data.tags.map((t) => <li>{t}</li>)}</ul>}
+      {config.share && <Share url={url} title={post.data.title} />}
+      {config.support.enabled && config.support.url && <p><a class="btn" href={config.support.url} target="_blank" rel="noopener">{config.support.label}</a></p>}
+      <AdSlot slot="end" />
+      <Newsletter />
+      <Comments />
+    </div>
+    {related.length > 0 && (
+      <section class="wrap section" aria-labelledby="rel-h">
+        <div class="sec-head"><h2 id="rel-h">Related articles</h2></div>
+        <div class="grid">{related.map((p) => <ArticleCard post={p} category={cats.find((c) => c.id === p.data.category)!} />)}</div>
+      </section>
+    )}
+  </main>
+  <script>
+    const bar = document.getElementById('progress');
+    const update = () => { const h = document.documentElement; const max = h.scrollHeight - h.clientHeight; if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%'; };
+    addEventListener('scroll', update, { passive: true }); update();
+  </script>
+</Base>

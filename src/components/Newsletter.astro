@@ -1,0 +1,15 @@
+---
+import { config } from '../config.mjs';
+const n = config.newsletter;
+---
+{n.enabled && n.action && (
+  <section class="news" aria-labelledby="news-h">
+    <h2 id="news-h">{n.heading}</h2>
+    <p>{n.text}</p>
+    <form action={n.action} method="post" target="_blank">
+      <label class="sr-only" for="nl-email">Email address</label>
+      <input id="nl-email" type="email" name={n.emailField} placeholder="you@example.com" required />
+      <button class="btn" type="submit">Subscribe</button>
+    </form>
+  </section>
+)}

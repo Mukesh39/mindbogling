@@ -1,0 +1,71 @@
+---
+// Wraps every page: <head> tags, fonts, theme, analytics, header, footer.
+import '@fontsource-variable/inter/wght.css';
+import '@fontsource-variable/source-serif-4/wght.css';
+import '@fontsource/noto-sans-devanagari/devanagari-400.css';
+import '@fontsource/noto-sans-devanagari/devanagari-600.css';
+import '@fontsource/noto-serif-devanagari/devanagari-400.css';
+import '@fontsource/noto-serif-devanagari/devanagari-700.css';
+import '../styles/global.css';
+import { config } from '../config.mjs';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Consent from '../components/Consent.astro';
+
+const { title, description = config.description, image, type = 'website', jsonLd } = Astro.props;
+const pageTitle = title ? `${title} | ${config.name}` : `${config.name}: ${config.tagline}`;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const ogImage = new URL(image ?? '/og-default.png', Astro.site).href;
+const { provider, id, src } = config.analytics;
+const f = config.fonts;
+const css = `:root{--accent:${config.colors.accent}}:root[data-theme='dark']{--accent:${config.colors.accentDark}}` +
+  (f.heading ? `:root{--font-heading:${f.heading}}` : '') + (f.body ? `:root{--font-read:${f.body}}` : '') + (f.ui ? `:root{--font-ui:${f.ui}}` : '');
+---
+<!doctype html>
+<html lang={config.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" type="application/rss+xml" title={config.name} href="/rss.xml" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:site_name" content={config.name} />
+    <meta property="og:type" content={type} />
+    <meta property="og:title" content={title ?? config.name} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title ?? config.name} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="theme-color" content="#1F4FD8" />
+    <script is:inline>
+      // Apply saved/system theme before first paint (prevents a white flash)
+      (function () { try { var t = localStorage.getItem('theme');
+        if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        document.documentElement.dataset.theme = t; } catch (e) {} })();
+    </script>
+    <style set:html={css}></style>
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />}
+    {import.meta.env.PROD && provider === 'cloudflare' && id && <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: id })}></script>}
+    {import.meta.env.PROD && provider === 'goatcounter' && id && <script async src="//gc.zgo.at/count.js" data-goatcounter={`https://${id}.goatcounter.com/count`}></script>}
+    {import.meta.env.PROD && provider === 'umami' && id && <script defer src={src || 'https://cloud.umami.is/script.js'} data-website-id={id}></script>}
+    {config.ads.enabled && <script is:inline define:vars={{ client: config.ads.client, needConsent: config.consent.enabled }}>
+      // Loads Google AdSense (only after consent, if the consent banner is on)
+      (function () { function load() { if (window.__adsLoaded) return; window.__adsLoaded = 1;
+        var s = document.createElement('script'); s.async = true; s.crossOrigin = 'anonymous';
+        s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + client; document.head.appendChild(s); }
+        if (!needConsent || localStorage.getItem('consent') === 'yes') load(); else addEventListener('consent-yes', load); })();
+    </script>}
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <Header />
+    <slot />
+    <Footer />
+    <Consent />
+  </body>
+</html>

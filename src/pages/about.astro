@@ -1,0 +1,11 @@
+---
+import Page from '../layouts/Page.astro';
+import { config } from '../config.mjs';
+---
+<Page title="About" description={`About ${config.name}`}>
+  <p>{config.name} publishes free, easy-to-read articles on economy, geography, psychology and other subjects. The goal is simple: explain ideas clearly, without jargon, so anyone can learn from them.</p>
+  <h2>Who writes this</h2>
+  <p>{config.author}. Replace this paragraph with a short introduction: who you are, why you started this blog, and what readers can expect.</p>
+  <h2>How we work</h2>
+  <p>Articles are researched from reliable public sources. If you spot a mistake, please <a href="/contact/">tell us</a> and we will correct it.</p>
+</Page>
