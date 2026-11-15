@@ -7,10 +7,10 @@ export const config = {
   name: 'Clear Notes',                       // Site name (shown in header, tabs, shares)
   tagline: 'Plain-language explainers on economy, geography, psychology and more.',
   description: 'Free, easy-to-read articles that explain how the world works.',
-  url: 'https://your-site-name.netlify.app', // CHANGE to your real address (needed for sitemap, RSS, share cards)
+  url: 'https://mindbogling.netlify.app/', // CHANGE to your real address (needed for sitemap, RSS, share cards)
   lang: 'en',                                // 'en' or 'hi' (sets the <html lang>)
-  author: 'Your Name',                       // Default author
-  email: 'you@example.com',                  // Shown on the Contact page
+  author: 'mukesh kumar',                       // Default author
+  email: 'muk.786422@gmail.com',                  // Shown on the Contact page
   logo: null,                                // e.g. '/logo.svg' (put the file in the /public folder). null = text only
 
   // ---- Social links (leave '' to hide) ---------------------
